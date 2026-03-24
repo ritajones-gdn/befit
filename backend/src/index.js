@@ -3,7 +3,12 @@ const cors = require('cors');
 require('dotenv').config();
 
 const db = require('./config/database');
+//1.
 const authRoutes = require('./routes/auth');
+
+//2.
+const userRoutes = require('./routes/users');
+
 
 const app = express();
 app.use(cors());
@@ -11,6 +16,8 @@ app.use(express.json());
 
 //ROUTES 
 app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
+
 
 //Later we will add:
 //app.use('/meals', mealRoutes);
