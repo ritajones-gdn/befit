@@ -3,7 +3,6 @@ const router = express.Router();
 const { body } = require('express-validator');
 const { register, login } = require('../controllers/authController');
 
-// ─── VALIDATION RULES ───────────────────────────────────────
 
 const registerRules = [
   body('username')
@@ -35,7 +34,6 @@ const loginRules = [
     .withMessage('Password is required')
 ];
 
-// ─── ROUTES ─────────────────────────────────────────────────
 
 // POST /auth/register
 router.post('/register', registerRules, register);
