@@ -10,17 +10,33 @@ const logWorkout = async (req, res) => {
       return res.status(400).json({ message: 'Workout title is required' });
     }
 
+    //update: estimate calories burned based on workout type and duration
+    const MET = {
+      strength: 6,
+      cardio: 8,
+      cycling: 7,
+      yoga: 3,
+      sports: 7,
+      other: 5
+    };
+
+    const metValue = MET[workout_type] || 5;
+    const calories_burned = duration_minutes 
+      ? Math.round(metValue * duration_minutes) 
+      : 0;
+
     const [result] = await db.query(
       `INSERT INTO workouts 
-        (user_id, title, workout_type, duration_minutes, notes, logged_date)
-       VALUES (?, ?, ?, ?, ?, ?)`,
+        (user_id, title, workout_type, duration_minutes, notes, logged_date, calories_burned)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         req.user.id,
         title,
         workout_type || null,
         duration_minutes || null,
         notes || null,
-        logged_date || new Date().toISOString().split('T')[0]
+        logged_date || new Date().toISOString().split('T')[0],
+        calories_burned
       ]
     );
 
@@ -31,6 +47,7 @@ const logWorkout = async (req, res) => {
         title,
         workout_type,
         duration_minutes,
+        calories_burned,
         notes
       }
     });
