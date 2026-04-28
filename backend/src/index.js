@@ -15,6 +15,8 @@ const mealRoutes = require('./routes/meals');
 //4
 const workoutRoutes = require('./routes/workouts');
 
+//5
+const checkinRoutes = require('./routes/checkins');
 
 
 
@@ -28,12 +30,13 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/meals', mealRoutes);
 app.use('/workouts', workoutRoutes);
+app.use('/checkins', checkinRoutes);
 
 
 
 
 //Later we will add:
-//app.use('/checkins', checkinRoutes);
+
 //app.use('/friends', friendRoutes);
 
 //HEALTH CHECK (for now)
