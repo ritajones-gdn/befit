@@ -49,7 +49,7 @@ const logMeal = async (req, res) => {
   }
 };
 
-//getting todays meal + counting calories!!
+//getting todays meal + counting calories!! (updated: and calories burned)
 const getTodayMeals = async (req, res) => {
   try {
     const today = new Date().toISOString().split('T')[0];
@@ -75,12 +75,25 @@ const getTodayMeals = async (req, res) => {
     );
 
     const calorieGoal = userRows[0].calorie_goal;
-    const caloriesRemaining = calorieGoal - totalCalories;
+    
+    //update:
+     const [workoutRows] = await db.query(
+      `SELECT COALESCE(SUM(calories_burned), 0) as total_burned 
+       FROM workouts 
+       WHERE user_id = ? AND logged_date = ?`,
+      [req.user.id, today]
+    );
+
+const totalCaloriesBurned = parseInt(workoutRows[0].total_burned) || 0;    const netCalories = totalCalories - totalCaloriesBurned;
+    const caloriesRemaining = calorieGoal - netCalories;
+
 
     return res.status(200).json({
       date: today,
       calorie_goal: calorieGoal,
-      total_calories: totalCalories,
+      total_calories_eaten: totalCalories,
+      total_calories_burned: totalCaloriesBurned,
+      net_calories: netCalories,
       calories_remaining: caloriesRemaining,
       total_protein: totalProtein.toFixed(1),
       total_carbs: totalCarbs.toFixed(1),
