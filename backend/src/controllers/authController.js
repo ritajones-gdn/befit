@@ -99,6 +99,14 @@ const login = async (req, res) => {
 
     const user = rows[0];
 
+    //update: 
+    //Check if account is deactivated
+    if (!user.is_active) {
+      return res.status(401).json({ 
+        message: 'Your account has been deactivated. Please contact support.' 
+      });
+    }
+
     // 3. Compare passwords
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
 

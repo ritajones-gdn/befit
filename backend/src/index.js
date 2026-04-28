@@ -27,6 +27,8 @@ const postRoutes = require('./routes/posts');
 //8
 const notificationRoutes = require('./routes/notifications');
 
+//9
+const adminRoutes = require('./routes/admin');
 
 
 const app = express();
@@ -42,14 +44,8 @@ app.use('/checkins', checkinRoutes);
 app.use('/social', socialRoutes);
 app.use('/posts', postRoutes);
 app.use('/notifications', notificationRoutes);
+app.use('/admin', adminRoutes);
 
-
-
-
-//Later we will add:
-//UPDATED
-
-// app.use('/admin', adminRoutes);
 
 
 //HEALTH CHECK (for now)

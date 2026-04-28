@@ -1,11 +1,9 @@
 const jwt = require('jsonwebtoken');
+const db = require('../config/database');
 
-// ─── PROTECT ROUTE ──────────────────────────────────────────
-//checks every protected route to make sure the user is logged in
-//and as a valid token (ex: bouncer at the door)
-const protect = (req, res, next) => {
+//updated protect routes
+const protect = async (req, res, next) => {
 
-  // 1. Get the token from the request header
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -14,17 +12,31 @@ const protect = (req, res, next) => {
     });
   }
 
-  // 2. Grab just the token part after "Bearer "
   const token = authHeader.split(' ')[1];
 
   try {
-    // 3. Verify the token is real and not expired
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // 4. Attach the user info to the request
-    req.user = decoded;
+    //Fetch fresh user data from database every request
+    const [rows] = await db.query(
+      'SELECT id, username, is_admin, is_active FROM users WHERE id = ?',
+      [decoded.id]
+    );
 
-    // 5. Move on to the actual route
+    if (rows.length === 0) {
+      return res.status(401).json({ message: 'User no longer exists.' });
+    }
+
+    //Check if user is deactivated
+    if (!rows[0].is_active) {
+      return res.status(401).json({ 
+        message: 'Your account has been deactivated.' 
+      });
+    }
+
+    //Attach fresh user data to request
+    req.user = rows[0];
+
     next();
 
   } catch (error) {
@@ -34,8 +46,7 @@ const protect = (req, res, next) => {
   }
 };
 
-//ADMIN ONLY 
-//checks if the user is an admin (we use later for admin features)
+//admin only
 const adminOnly = (req, res, next) => {
 
   if (!req.user.is_admin) {
