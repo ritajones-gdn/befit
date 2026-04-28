@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { checkStreakMilestone } = require('./notificationController');
 
 //daily checkin
 const checkIn = async (req, res) => {
@@ -71,6 +72,10 @@ const checkIn = async (req, res) => {
         [req.user.id, today]
       );
     }
+
+    //update to trigger streak milestone notification
+    //check if user hit a milestone
+    await checkStreakMilestone(req.user.id, currentStreak);
 
     return res.status(201).json({
       message: 'Check-in successful! 🎉',
