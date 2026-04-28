@@ -21,6 +21,8 @@ const checkinRoutes = require('./routes/checkins');
 //6
 const socialRoutes = require('./routes/social');
 
+//7
+const postRoutes = require('./routes/posts');
 
 
 
@@ -36,6 +38,7 @@ app.use('/meals', mealRoutes);
 app.use('/workouts', workoutRoutes);
 app.use('/checkins', checkinRoutes);
 app.use('/social', socialRoutes);
+app.use('/posts', postRoutes);
 
 
 
@@ -43,7 +46,6 @@ app.use('/social', socialRoutes);
 //Later we will add:
 //UPDATED
 
-// app.use('/posts', postRoutes);
 // app.use('/notifications', notificationRoutes);
 
 //HEALTH CHECK (for now)
