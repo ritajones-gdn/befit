@@ -6,6 +6,14 @@ import { getStreak, checkIn } from '../../api/checkins';
 import BottomNav from '../../components/BottomNav';
 import toast from 'react-hot-toast';
 
+const moods = [
+  { value: 'great', emoji: '😁', label: 'Great' },
+  { value: 'good', emoji: '😊', label: 'Good' },
+  { value: 'okay', emoji: '😐', label: 'Okay' },
+  { value: 'tired', emoji: '😴', label: 'Tired' },
+  { value: 'bad', emoji: '😔', label: 'Bad' },
+];
+
 const Home = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -13,7 +21,14 @@ const Home = () => {
   const [streak, setStreak] = useState({ current_streak: 0, longest_streak: 0 });
   const [todaySummary, setTodaySummary] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [checkingIn, setCheckingIn] = useState(false);
+
+  // Check in popup states
+  const [showCheckinPopup, setShowCheckinPopup] = useState(false);
+  const [showStreakPopup, setShowStreakPopup] = useState(false);
+  const [selectedMood, setSelectedMood] = useState('good');
+  const [note, setNote] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [streakData, setStreakData] = useState(null);
 
   const disciplines = [
     { name: 'Pilates', emoji: '🧘', color: 'bg-rose-100', type: 'flexibility' },
@@ -42,22 +57,39 @@ const Home = () => {
   };
 
   const handleCheckIn = async () => {
-    setCheckingIn(true);
+    setSubmitting(true);
     try {
-      const response = await checkIn({ mood: 'good' });
-      toast.success(response.data.message);
+      const response = await checkIn({
+        mood: selectedMood,
+        note: note || null
+      });
+      setStreakData(response.data.streak);
+      setShowCheckinPopup(false);
+      setShowStreakPopup(true);
       setStreak(response.data.streak);
+      setNote('');
     } catch (error) {
       const message = error.response?.data?.message;
       if (message?.includes('already checked in')) {
         toast.error('Already checked in today! Come back tomorrow 💪');
+        setShowCheckinPopup(false);
       } else {
         toast.error('Check-in failed. Please try again.');
       }
     } finally {
-      setCheckingIn(false);
+      setSubmitting(false);
     }
   };
+
+  // Circle progress
+  const radius = 45;
+  const circumference = 2 * Math.PI * radius;
+  const maxStreak = 30;
+  const progress = Math.min(
+    ((streakData?.current_streak || 0) / maxStreak) * circumference,
+    circumference
+  );
+  const strokeDashoffset = circumference - progress;
 
   if (loading) {
     return (
@@ -84,7 +116,6 @@ const Home = () => {
         </button>
       </div>
 
-      {/* Main Content */}
       <div className="px-4 md:px-8 lg:px-12 py-6 max-w-7xl mx-auto">
 
         {/* Welcome */}
@@ -95,7 +126,7 @@ const Home = () => {
           <p className="text-gray-500 text-sm mt-1">Ready to find your flow today?</p>
         </div>
 
-        {/* Top Row — Streak + Summary side by side on tablet/desktop */}
+        {/* Top Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 
           {/* Streak Card */}
@@ -120,16 +151,15 @@ const Home = () => {
                 "Keep your consistency going!"
               </p>
               <button
-                onClick={handleCheckIn}
-                disabled={checkingIn}
-                className="bg-red-900 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-800 transition disabled:opacity-50"
+                onClick={() => setShowCheckinPopup(true)}
+                className="bg-red-900 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-red-800 transition"
               >
-                {checkingIn ? 'Checking in...' : 'Check in Today'}
+                Check in Today
               </button>
             </div>
           </div>
 
-          {/* Today's Summary Card */}
+          {/* Today's Summary */}
           {todaySummary && (
             <div className="bg-white rounded-2xl p-5 shadow-sm">
               <h3 className="text-gray-900 font-bold mb-4">Today's Summary 🍽️</h3>
@@ -182,7 +212,7 @@ const Home = () => {
               View All
             </button>
           </div>
-          <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-3">
+          <div className="grid grid-cols-4 lg:grid-cols-8 gap-3">
             {disciplines.map((discipline) => (
               <button
                 key={discipline.name}
@@ -224,18 +254,152 @@ const Home = () => {
               <span className="text-sm font-medium text-gray-700">View Feed</span>
             </button>
             <button
-              onClick={() => navigate('/checkin')}
+              onClick={() => navigate('/search')}
               className="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3 hover:bg-gray-50 transition"
             >
-              <span className="text-2xl">✅</span>
-              <span className="text-sm font-medium text-gray-700">Check In</span>
+              <span className="text-2xl">🔍</span>
+              <span className="text-sm font-medium text-gray-700">Find Friends</span>
             </button>
           </div>
         </div>
 
       </div>
 
-      {/* Bottom Navigation */}
+      {/* ── Check In Mood Popup ── */}
+      {showCheckinPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-xl font-bold text-gray-900">Daily Check-In 🔥</h2>
+              <button
+                onClick={() => setShowCheckinPopup(false)}
+                className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Mood Selector */}
+            <p className="text-gray-500 text-sm mb-3">How are you feeling today?</p>
+            <div className="flex justify-between gap-2 mb-5">
+              {moods.map((mood) => (
+                <button
+                  key={mood.value}
+                  onClick={() => setSelectedMood(mood.value)}
+                  className={`flex-1 flex flex-col items-center py-3 rounded-xl transition ${
+                    selectedMood === mood.value
+                      ? 'bg-red-900 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                >
+                  <span className="text-xl mb-1">{mood.emoji}</span>
+                  <span className={`text-xs font-medium ${
+                    selectedMood === mood.value ? 'text-white' : 'text-gray-600'
+                  }`}>
+                    {mood.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Note */}
+            <textarea
+              placeholder="Add a note (optional)..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              rows={2}
+              className="w-full px-4 py-3 bg-gray-100 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-900 text-sm resize-none mb-4"
+            />
+
+            {/* Check In Button */}
+            <button
+              onClick={handleCheckIn}
+              disabled={submitting}
+              className="w-full py-3 bg-red-900 text-white font-semibold rounded-full hover:bg-red-800 transition disabled:opacity-50"
+            >
+              {submitting ? 'Checking in...' : '🔥 Check In'}
+            </button>
+
+          </div>
+        </div>
+      )}
+
+      {/* ── Streak Updated Popup ── */}
+      {showStreakPopup && streakData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-3xl p-8 w-full max-w-sm text-center shadow-2xl">
+
+            {/* Fire Icon */}
+            <div className="text-4xl mb-2">🔥</div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Streak Updated!
+            </h2>
+
+            {/* Circle Progress */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="relative w-32 h-32">
+                <svg
+                  className="w-32 h-32 transform -rotate-90"
+                  viewBox="0 0 100 100"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={radius}
+                    fill="none"
+                    stroke="#f3f4f6"
+                    strokeWidth="8"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={radius}
+                    fill="none"
+                    stroke="#7f1d1d"
+                    strokeWidth="8"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-bold text-gray-900">
+                    {streakData.current_streak}
+                  </span>
+                  <span className="text-xs text-gray-400 uppercase tracking-wide">
+                    days
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Longest Streak */}
+            <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 mb-4">
+              <span className="text-gray-500 text-sm">Longest streak</span>
+              <span className="text-red-900 font-bold text-sm">
+                {streakData.longest_streak} days
+              </span>
+            </div>
+
+            {/* Quote */}
+            <p className="text-gray-400 text-sm italic mb-6">
+              "Keep your consistency going!"
+            </p>
+
+            {/* Continue Button */}
+            <button
+              onClick={() => setShowStreakPopup(false)}
+              className="w-full py-3 bg-red-900 text-white font-semibold rounded-full hover:bg-red-800 transition"
+            >
+              Continue
+            </button>
+
+          </div>
+        </div>
+      )}
+
       <BottomNav />
     </div>
   );
