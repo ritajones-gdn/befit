@@ -11,6 +11,8 @@ import LogMeal from './pages/main/LogMeal';
 import LogWorkout from './pages/main/LogWorkout';
 
 //Social pages
+import CreatePost from './pages/social/CreatePost';
+import PostDetail from './pages/social/PostDetail';
 import Feed from './pages/social/Feed';
 import Search from './pages/social/Search';
 import Profile from './pages/social/Profile';
@@ -50,6 +52,8 @@ function App() {
       <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/log-meal" element={<ProtectedRoute><LogMeal /></ProtectedRoute>} />
       <Route path="/log-workout" element={<ProtectedRoute><LogWorkout /></ProtectedRoute>} />
+      <Route path="/create-post" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
+      <Route path="/post/:id" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
       <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
       <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
       <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

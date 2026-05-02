@@ -254,7 +254,7 @@ const Home = () => {
               <span className="text-sm font-medium text-gray-700">View Feed</span>
             </button>
             <button
-              onClick={() => navigate('/search')}
+              onClick={() => navigate('/feed')}
               className="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3 hover:bg-gray-50 transition"
             >
               <span className="text-2xl">🔍</span>

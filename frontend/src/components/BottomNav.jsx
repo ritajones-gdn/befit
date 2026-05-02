@@ -33,10 +33,10 @@ const BottomNav = () => {
             🏋️ Log Workout
           </button>
           <button
-            onClick={() => handleFabAction('/feed')}
+            onClick={() => handleFabAction('/create-post')}
             className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-full shadow-lg text-gray-800 font-medium text-sm hover:bg-gray-50 transition"
           >
-            📝 Post
+          📝 Post
           </button>
           <button
             onClick={() => handleFabAction('/log-meal')}
@@ -63,11 +63,11 @@ const BottomNav = () => {
             </Link>
 
             {/* Friends */}
-            <Link to="/search" className="flex flex-col items-center py-1.5 px-3">
-              <span className={`text-xl ${isActive('/search') ? 'opacity-100' : 'opacity-40'}`}>
+            <Link to="/feed" className="flex flex-col items-center py-1.5 px-3">
+              <span className={`text-xl ${isActive('/feed') ? 'opacity-100' : 'opacity-40'}`}>
                 👥
               </span>
-              <span className={`text-xs mt-0.5 ${isActive('/search') ? 'text-red-900 font-semibold' : 'text-gray-400'}`}>
+              <span className={`text-xs mt-0.5 ${isActive('/feed') ? 'text-red-900 font-semibold' : 'text-gray-400'}`}>
                 Friends
               </span>
             </Link>
