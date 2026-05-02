@@ -9,7 +9,6 @@ import Register from './pages/auth/Register';
 import Home from './pages/main/Home';
 import LogMeal from './pages/main/LogMeal';
 import LogWorkout from './pages/main/LogWorkout';
-import Checkin from './pages/main/Checkin';
 
 //Social pages
 import Feed from './pages/social/Feed';
@@ -51,7 +50,6 @@ function App() {
       <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/log-meal" element={<ProtectedRoute><LogMeal /></ProtectedRoute>} />
       <Route path="/log-workout" element={<ProtectedRoute><LogWorkout /></ProtectedRoute>} />
-      <Route path="/checkin" element={<ProtectedRoute><Checkin /></ProtectedRoute>} />
       <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
       <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
       <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
