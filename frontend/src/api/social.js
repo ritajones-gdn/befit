@@ -6,3 +6,5 @@ export const followUser = (id) => api.post(`/social/users/${id}/follow`);
 export const unfollowUser = (id) => api.delete(`/social/users/${id}/unfollow`);
 export const getFollowers = () => api.get('/social/followers');
 export const getFollowing = () => api.get('/social/following');
+export const getUserPosts = (id) => api.get(`/social/users/${id}/posts`);
+export const getUserWorkouts = (id) => api.get(`/social/users/${id}/workouts`);

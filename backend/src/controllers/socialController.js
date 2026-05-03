@@ -222,11 +222,62 @@ const getFollowing = async (req, res) => {
   }
 };
 
+//get user's post
+const getUserPosts = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [posts] = await db.query(
+      `SELECT p.*, u.username, u.full_name, u.avatar_url
+       FROM posts p
+       JOIN users u ON p.user_id = u.id
+       WHERE p.user_id = ?
+       ORDER BY p.created_at DESC`,
+      [id]
+    );
+
+    return res.status(200).json({
+      total_posts: posts.length,
+      posts
+    });
+
+  } catch (error) {
+    console.error('Get user posts error:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+//get users workouts
+const getUserWorkouts = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [workouts] = await db.query(
+      `SELECT * FROM workouts 
+       WHERE user_id = ? 
+       ORDER BY logged_date DESC
+       LIMIT 10`,
+      [id]
+    );
+
+    return res.status(200).json({
+      total_workouts: workouts.length,
+      workouts
+    });
+
+  } catch (error) {
+    console.error('Get user workouts error:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = { 
   searchUsers, 
   getUserProfile, 
   followUser, 
   unfollowUser,
   getFollowers,
-  getFollowing
+  getFollowing,
+  getUserPosts,
+  getUserWorkouts
 };

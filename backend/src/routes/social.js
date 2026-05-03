@@ -7,7 +7,9 @@ const {
   followUser,
   unfollowUser,
   getFollowers,
-  getFollowing
+  getFollowing,
+  getUserPosts,
+  getUserWorkouts
 } = require('../controllers/socialController');
 
 //routes 
@@ -28,5 +30,11 @@ router.get('/followers', protect, getFollowers);
 
 //GET /social/following --> get who I'm following
 router.get('/following', protect, getFollowing);
+
+// GET /social/users/:id/posts → get user's posts
+router.get('/users/:id/posts', protect, getUserPosts);
+
+// GET /social/users/:id/workouts → get user's workouts
+router.get('/users/:id/workouts', protect, getUserWorkouts);
 
 module.exports = router;
