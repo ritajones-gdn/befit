@@ -170,6 +170,42 @@ const makeAdmin = async (req, res) => {
   }
 };
 
+//remove admin
+const removeAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Can't demote yourself
+    if (parseInt(id) === req.user.id) {
+      return res.status(400).json({ 
+        message: "You can't remove your own admin access!" 
+      });
+    }
+
+    const [user] = await db.query(
+      'SELECT id, username FROM users WHERE id = ?',
+      [id]
+    );
+
+    if (user.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    await db.query(
+      'UPDATE users SET is_admin = FALSE WHERE id = ?',
+      [id]
+    );
+
+    return res.status(200).json({ 
+      message: `${user[0].username} is no longer an admin` 
+    });
+
+  } catch (error) {
+    console.error('Remove admin error:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
 //delete user
 const deleteUser = async (req, res) => {
   try {
@@ -253,6 +289,7 @@ module.exports = {
   deactivateUser,
   reactivateUser,
   makeAdmin,
+  removeAdmin,
   deleteUser,
   getAllPosts,
   deleteAnyPost

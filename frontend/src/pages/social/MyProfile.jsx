@@ -17,7 +17,7 @@ const fitnessGoals = [
 
 const MyProfile = () => {
   const navigate = useNavigate();
-  const { user, login, token } = useAuth();
+  const { user, login, logout, token } = useAuth();
 
   const [activeTab, setActiveTab] = useState('posts');
   const [posts, setPosts] = useState([]);
@@ -167,6 +167,17 @@ const MyProfile = () => {
   </div>
 </div>
         </div>
+
+        {/* Admin Button — only visible to admins */}
+        {user?.is_admin && (
+        <button
+          onClick={() => navigate('/admin/stats')}
+          className="mt-4 px-6 py-2 bg-red-900 text-white rounded-full text-sm font-semibold hover:bg-red-800 transition flex items-center gap-2 mx-auto"
+        >
+        <span>⚙️</span>
+        <span>Admin Dashboard</span>
+        </button>
+        )}
 
         {/* Tabs */}
         <div className="flex bg-gray-100 rounded-full p-1 mb-6">
@@ -486,6 +497,17 @@ const MyProfile = () => {
                   className="w-full py-4 bg-red-900 text-white font-bold rounded-full hover:bg-red-800 transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {saving ? 'Saving...' : 'Save Changes ✅'}
+                </button>
+
+                {/* Logout Button */}
+                <button
+                  onClick={() => {
+                    logout();
+                    navigate('/login');
+                    }}
+                    className="w-full py-4 bg-gray-100 text-gray-700 font-bold rounded-full hover:bg-gray-200 transition flex items-center justify-center gap-2"
+                >
+                  🚪 Logout
                 </button>
 
               </div>

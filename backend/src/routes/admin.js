@@ -7,6 +7,7 @@ const {
   deactivateUser,
   reactivateUser,
   makeAdmin,
+  removeAdmin,
   deleteUser,
   getAllPosts,
   deleteAnyPost
@@ -25,6 +26,7 @@ router.put('/users/:id/deactivate', protect, adminOnly, deactivateUser);
 router.put('/users/:id/reactivate', protect, adminOnly, reactivateUser);
 router.put('/users/:id/make-admin', protect, adminOnly, makeAdmin);
 router.delete('/users/:id', protect, adminOnly, deleteUser);
+router.put('/users/:id/remove-admin', protect, adminOnly, removeAdmin);
 
 //posts
 router.get('/posts', protect, adminOnly, getAllPosts);
