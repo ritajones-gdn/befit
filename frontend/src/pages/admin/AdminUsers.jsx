@@ -259,7 +259,7 @@ const AdminUsers = () => {
                         <div className="flex items-center gap-2">
 
                           {/* Make Admin */}
-                          {!u.is_admin && (
+                          {!Boolean(u.is_admin) && (
                             <button
                               onClick={() => handleMakeAdmin(u.id)}
                               title="Make Admin"
@@ -270,7 +270,7 @@ const AdminUsers = () => {
                           )}
 
                           {/* Remove Admin */}
-                          {u.is_admin && (
+                          {Boolean(u.is_admin) && (
                             <button
                               onClick={() => handleRemoveAdmin(u.id)}
                               title="Remove Admin"
@@ -281,7 +281,7 @@ const AdminUsers = () => {
                           )}
 
                           {/* Deactivate */}
-                          {u.is_active && (
+                          {Boolean(u.is_active) && (
                             <button
                               onClick={() => handleDeactivate(u.id)}
                               title="Deactivate"
@@ -292,7 +292,7 @@ const AdminUsers = () => {
                           )}
 
                           {/* Reactivate */}
-                          {!u.is_active && (
+                          {!Boolean(u.is_active) && (
                             <button
                               onClick={() => handleReactivate(u.id)}
                               title="Reactivate"

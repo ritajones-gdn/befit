@@ -169,7 +169,7 @@ const MyProfile = () => {
         </div>
 
         {/* Admin Button — only visible to admins */}
-        {user?.is_admin && (
+        {Boolean(user?.is_admin) && (
         <button
           onClick={() => navigate('/admin/stats')}
           className="mt-4 px-6 py-2 bg-red-900 text-white rounded-full text-sm font-semibold hover:bg-red-800 transition flex items-center gap-2 mx-auto"
